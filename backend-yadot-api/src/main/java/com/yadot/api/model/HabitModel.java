@@ -16,6 +16,7 @@ public class HabitModel {
 
     private Long habitId;
 
+    @Column(length = 50, nullable = false)
     private String habitName;
 
     // muitos hábitos podem ter a mesma categoria
@@ -23,6 +24,7 @@ public class HabitModel {
     @JoinColumn(name = "categoria_id") // precisamos juntar as duas tabelas (FK)
     private CategoriaModel categoria;
 
+    @Column(nullable = false)
     private String habitIcon;
 
     private boolean saveGoogleCalendar;
