@@ -2,15 +2,15 @@ package com.yadot.api.model;
 
 import com.yadot.api.enums.DiasSemanaModel;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
-@Getter @Setter // Lombok
+@Data // Lombok
 @Entity // Transforma a classe em uma entidade no banco de dados (necessario em classesModel/Entities)
 @Table(name = "tb_habitos") //criacao de uma tabela com nome da tabela
-
+@NoArgsConstructor
+@AllArgsConstructor
 public class HabitModel {
     @Id //add auto na tabela o id (dependency JavaPersistenceAPI/BD)
     @GeneratedValue(strategy = GenerationType.IDENTITY) //forma de gerar o id (1, 2...)
@@ -35,14 +35,4 @@ public class HabitModel {
     @CollectionTable(name = "habitos_dias", joinColumns = @JoinColumn(name = "habit_id"))
     private List<DiasSemanaModel> diasDaSemana;
 
-    public HabitModel() {
-    }
-
-    public HabitModel(String habitName, CategoriaModel categoria, String habitIcon,  boolean saveGoogleCalendar,  List<DiasSemanaModel> diasDaSemana) {
-        this.habitName = habitName;
-        this.categoria = categoria;
-        this.habitIcon = habitIcon;
-        this.saveGoogleCalendar = saveGoogleCalendar;
-        this.diasDaSemana = diasDaSemana;
-    }
 }
