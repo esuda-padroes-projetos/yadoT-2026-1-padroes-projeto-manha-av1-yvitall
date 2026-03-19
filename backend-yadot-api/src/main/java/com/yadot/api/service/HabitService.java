@@ -20,8 +20,11 @@ public class HabitService {
     }
 
     public HabitModel save(HabitModel newHabit) {
-
-        return habitRepository.save(newHabit);
+        Long idCategoria = categoriaRepository.findById(newHabit.getCategoria().getId());
+            if (categoriaRepository.findById(idCategoria).isEmpty()){
+                throw new RuntimeException("Categoria não localizada.");
+        }
+                return habitRepository.save(newHabit);
     }
     public void deleteHabit(Long id){habitRepository.deleteById(id);}
 

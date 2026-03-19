@@ -23,7 +23,7 @@ public class HabitController {
     public List<HabitModel> getAll(){return habitoService.getAll();}
 
     @PostMapping
-    public HabitModel create(@RequestBody @Valid HabitModel habitModel) { return habitoService.save(habitModel);}
+    public HabitModel create(@Valid @RequestBody HabitModel habitModel) { return habitoService.save(habitModel);}
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {habitoService.deleteHabit(id);}
