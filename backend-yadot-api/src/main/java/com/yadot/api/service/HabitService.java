@@ -11,12 +11,14 @@ import java.util.List;
 public class HabitService {
     private final HabitRepository habitRepository;
     private final CategoriaRepository categoriaRepository;
-    public HabitService(HabitRepository habitRepository) {
+    public HabitService(HabitRepository habitRepository, CategoriaRepository categoriaRepository) {
         this.habitRepository = habitRepository;
+        this.categoriaRepository = categoriaRepository;
     }
     public List<HabitModel> getAll() {
         return habitRepository.findAll();
     }
+
     public HabitModel save(HabitModel newHabit) {
 
         return habitRepository.save(newHabit);
