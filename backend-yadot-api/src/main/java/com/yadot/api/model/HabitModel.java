@@ -30,7 +30,6 @@ public class HabitModel {
 
     @Size(min = 3, max = 50)
     @NotBlank(message = "É obrigatório preencher o campo.")
-    @ManyToOne
     private String habitName;
 
     @Enumerated(EnumType.STRING)

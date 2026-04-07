@@ -9,10 +9,8 @@ import java.util.List;
 @Service
 public class HabitService {
     private final HabitRepository habitRepository;
-    private final CategoriaRepository categoriaRepository;
-    public HabitService(HabitRepository habitRepository, CategoriaRepository categoriaRepository) {
+    public HabitService(HabitRepository habitRepository) {
         this.habitRepository = habitRepository;
-        this.categoriaRepository = categoriaRepository;
     }
     public List<HabitModel> getAll() {
         return habitRepository.findAll();
