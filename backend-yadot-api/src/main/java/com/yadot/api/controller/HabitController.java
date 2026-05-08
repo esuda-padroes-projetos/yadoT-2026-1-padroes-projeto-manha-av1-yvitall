@@ -20,12 +20,18 @@ public class HabitController {
 
     //list
     @GetMapping
-    public List<HabitModel> getAll(){return habitoService.getAll();}
+    public List<HabitModel> getAll(){
+        return habitoService.getAll();
+    }
 
     @PostMapping
-    public HabitModel create(@RequestBody @Valid HabitModel habitModel) { return habitoService.save(habitModel);}
+    public HabitModel create(@RequestBody @Valid HabitModel habitModel) {
+        return habitoService.save(habitModel);
+    }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {habitoService.deleteHabit(id);}
+    public void delete(@PathVariable Long id) {
+        habitoService.deleteHabit(id);
+    }
 }
 // GET, POST, PUT, DELETE

@@ -24,4 +24,5 @@ public class CheckinModel {
 
     @NotNull
     private LocalDate dataCheckin;
+
 }

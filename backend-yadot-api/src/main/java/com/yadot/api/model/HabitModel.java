@@ -22,7 +22,7 @@ public class HabitModel {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @NotBlank
+    @NotNull
     private UserModel usuario;
 
     @Size(min = 3, max = 50)
@@ -46,3 +46,5 @@ public class HabitModel {
     @OneToMany(mappedBy = "habit", cascade = CascadeType.ALL)
     private List<CheckinModel> historicoCheckins;
 }
+
+//aqui eu crio os moldes dos objetos que existirão nos programas, também definindo o que pode ou não pode ser feito

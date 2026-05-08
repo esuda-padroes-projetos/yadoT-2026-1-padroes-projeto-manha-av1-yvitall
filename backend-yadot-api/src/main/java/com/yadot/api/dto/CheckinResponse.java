@@ -1,7 +1,5 @@
 package com.yadot.api.dto;
 
-import com.yadot.api.enums.Status;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
