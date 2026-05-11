@@ -28,21 +28,28 @@ public class UserService {
             throw new RuntimeException("Email já cadastrado.");
         }
         String senhaCriptografada = passwordEncoder.encode(novoUsuario.getSenhaHash());
-        //encode is criptography function do BCrypt => a gente cria a variavel local, chama a função para criptografar e passa a senha atual com get
-        // encode() transforma "minhasenha123" em "$2a$10$..." (hash BCrypt)
+        //encode is criptography function do BCrypt => a gente cria a variavel local, chama a função para criptografar e passa a senha atual para ser criptografada com get
+        // encode() transforma "minhasenha123" em "$2a$10$..." (hash BCrypt) depois setamos a senhaCriptografada para o banco através do set
         novoUsuario.setSenhaHash(senhaCriptografada);
 
         userRepository.save(novoUsuario);
     }
 
-    public void loginUser(UserModel usuario){
-        if (userRepository.findByEmail(usuario.getEmail()).isPresent()){
-            throw new RuntimeException("Email não cadastrado. Registre-se");
+    public void loginUser(UserModel usuarioRequest){
+        UserModel usuarioBanco = userRepository.findByEmail(usuarioRequest.getEmail())
+                .orElseThrow(() -> new RuntimeException("Email não cadastrado. Registre-se"));
+        boolean senhaConfere = passwordEncoder.matches(
+                usuarioRequest.getSenhaHash(),
+                usuarioBanco.getSenhaHash());
+
+        if (!senhaConfere) {
+            throw new RuntimeException("Senha incorreta.");
         }
-        String senha = passwordEncoder.matches(usuario.senha, usuario.getSenhaHash()); //o que há de errado?
     }
-    // Busca por email — será usado no login depois
-    public Optional<UserModel> findByEmail(String email) {
+
+    public Optional<UserModel> findByEmail(String email) { // Busca por email — será usado no login depois
         return userRepository.findByEmail(email);
     }
 }
+
+//frameworks é uma caralhada de ferramentas/funções já pré-prontas que ajudam a agilizar o trabalho e poupar código
