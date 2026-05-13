@@ -2,36 +2,49 @@ package com.yadot.api.controller;
 
 import com.yadot.api.model.HabitModel;
 import com.yadot.api.service.HabitService;
-import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
-
 @RestController
-@RequestMapping("/habito")
+@RequestMapping("/habitos")
 public class HabitController {
-    private final HabitService habitoService;
+    private final HabitService habitService;
 
-    public HabitController(HabitService habitoService) {
-        this.habitoService = habitoService;
-    }
-
-    //list
-    @GetMapping
-    public List<HabitModel> getAll(){
-        return habitoService.getAll();
+    public HabitController(HabitService habitService) {
+        this.habitService = habitService;
     }
 
     @PostMapping
-    public HabitModel create(@RequestBody @Valid HabitModel habitModel) {
-        return habitoRepository.save(habitModel);
+    public ResponseEntity<HabitModel> criar(@RequestBody HabitModel novoHabito) {
+        HabitModel salvo = habitService.criarHabito(novoHabito);
+        return ResponseEntity.status(201).body(salvo);
+    }
+
+    @GetMapping("/usuario/{id}")
+    public ResponseEntity<List<HabitModel>> listarHabitosPorUsuario(@PathVariable Long id) {
+        return ResponseEntity.ok(habitService.listarPorUsuario(id));
+    }
+
+    @GetMapping("/hoje/{usuarioId}")
+    public ResponseEntity<List<HabitModel>> listarHojeDoUsuario(@PathVariable Long usuarioId) {
+        return ResponseEntity.ok(habitService.listarHabitosDoDia(usuarioId));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<HabitModel> buscarPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(habitService.buscarPorId(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<HabitModel> editar(@PathVariable Long id, @RequestBody HabitModel dadosAtualizados) {
+        return ResponseEntity.ok(habitService.editarHabito(id, dadosAtualizados));
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        habitoService.deleteHabit(id);
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+        habitService.deletarHabito(id);
+        return ResponseEntity.noContent().build();
     }
 }
-// GET, POST, PUT, DELETE

@@ -48,7 +48,7 @@ public class HabitService {
         // Converte para o seu enum em português
         DiasSemana diaAtual = converterDia(diaSemanaJava);
 
-        return habitRepository.findByUsuarioAndDiasSemanaContaining(usuario, diaAtual);
+        return habitRepository.findByUsuarioAndDiasDaSemanaContaining(usuario, diaAtual);
     }
 
     // Buscar hábito por ID — usado pelo lápis de edição

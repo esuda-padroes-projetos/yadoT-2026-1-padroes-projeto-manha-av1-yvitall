@@ -12,5 +12,5 @@ import java.util.List;
 @Repository
 public interface HabitRepository extends JpaRepository<HabitModel, Long> {
     List<HabitModel> findByUsuario(UserModel usuario);
-    List<HabitModel> findByUsuarioAndDiasSemanaContaining(UserModel usuario, DiasSemana dia);
+    List<HabitModel> findByUsuarioAndDiasDaSemanaContaining(UserModel usuario, DiasSemana dia);
 }
