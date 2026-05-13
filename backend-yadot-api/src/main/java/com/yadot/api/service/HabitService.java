@@ -65,7 +65,7 @@ public class HabitService {
         habitoExistente.setHabitName(dadosAtualizados.getHabitName());
         habitoExistente.setCategoria(dadosAtualizados.getCategoria());
         habitoExistente.setHabitIcon(dadosAtualizados.getHabitIcon());
-        // habitoExistente.setDiasSemana(dadosAtualizados.getDiasSemana());
+        habitoExistente.setDiasDaSemana(dadosAtualizados.getDiasDaSemana());
 
         return habitRepository.save(habitoExistente);
         // save() com ID existente faz UPDATE, não INSERT — o JPA sabe distinguir

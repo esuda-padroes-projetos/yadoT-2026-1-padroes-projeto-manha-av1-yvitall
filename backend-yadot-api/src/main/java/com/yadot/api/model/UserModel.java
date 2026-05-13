@@ -1,5 +1,6 @@
 package com.yadot.api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -23,6 +24,7 @@ public class UserModel {
     @Column (nullable = false)
     private String sobrenome;
 
+    @JsonIgnore
     @Column (nullable = false)
     private String senhaHash;
 
@@ -31,6 +33,7 @@ public class UserModel {
     @Email
     private String email;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
     private List<HabitModel> habitos;
 }

@@ -26,7 +26,7 @@ public class HabitController {
 
     @PostMapping
     public HabitModel create(@RequestBody @Valid HabitModel habitModel) {
-        return habitoService.save(habitModel);
+        return habitoRepository.save(habitModel);
     }
 
     @DeleteMapping("/{id}")
