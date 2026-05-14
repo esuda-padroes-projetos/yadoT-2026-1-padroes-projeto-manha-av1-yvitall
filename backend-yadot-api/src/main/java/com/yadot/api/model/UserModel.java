@@ -24,7 +24,6 @@ public class UserModel {
     @Column (nullable = false)
     private String sobrenome;
 
-    @JsonIgnore
     @Column (nullable = false)
     private String senhaHash;
 
