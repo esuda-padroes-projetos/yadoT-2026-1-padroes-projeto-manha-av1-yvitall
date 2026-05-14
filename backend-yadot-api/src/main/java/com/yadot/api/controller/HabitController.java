@@ -16,7 +16,7 @@ public class HabitController {
         this.habitService = habitService;
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<HabitModel> criar(@RequestBody HabitModel novoHabito) {
         HabitModel salvo = habitService.criarHabito(novoHabito);
         return ResponseEntity.status(201).body(salvo);
