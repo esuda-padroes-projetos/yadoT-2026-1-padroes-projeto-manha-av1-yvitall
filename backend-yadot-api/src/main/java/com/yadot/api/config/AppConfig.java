@@ -26,7 +26,9 @@ public class AppConfig {
         http
                 .csrf(csrf -> csrf.disable())         // desabilita proteção CSRF (necessário para APIs REST)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .anyRequest().permitAll()          // libera tudo por enquanto
+
                 );
         return http.build();
     }
@@ -39,6 +41,7 @@ public class AppConfig {
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
+
         return source;
     }
 }
