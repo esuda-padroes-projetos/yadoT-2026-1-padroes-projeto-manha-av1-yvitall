@@ -1,5 +1,8 @@
 package com.yadot.api.controller;
 
+import com.yadot.api.dto.UsuarioCadastroRequest;
+import com.yadot.api.dto.UsuarioLoginRequest;
+import com.yadot.api.dto.UsuarioResponse;
 import com.yadot.api.model.UserModel;
 import com.yadot.api.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -17,15 +20,15 @@ public class UserController {
     }
 
     @PostMapping("/cadastro")
-    public ResponseEntity<String> cadastrar(@RequestBody UserModel novoUsuario){
-        userService.registerUser(novoUsuario);
-        return ResponseEntity.status(201).body("Usuário cadastrado com sucesso!");
+    public ResponseEntity<UsuarioResponse> cadastrar(@RequestBody UsuarioCadastroRequest request) {
+        UsuarioResponse response = userService.registerUser(request);
+        return ResponseEntity.status(201).body(response);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UserModel usuarioRequest){
-        userService.loginUser(usuarioRequest);
-        return ResponseEntity.ok("Login realizado com sucesso!");
+    public ResponseEntity<UsuarioResponse> login(@RequestBody UsuarioLoginRequest usuarioRequest){
+        UsuarioResponse response = userService.loginUser(usuarioRequest);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping

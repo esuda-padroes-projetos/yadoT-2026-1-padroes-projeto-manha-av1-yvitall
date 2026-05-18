@@ -1,5 +1,8 @@
 package com.yadot.api.controller;
 
+import com.yadot.api.dto.CheckinRequest;
+import com.yadot.api.dto.CheckinResponse;
+import com.yadot.api.dto.ProgressoResponse;
 import com.yadot.api.model.CheckinModel;
 import com.yadot.api.service.CheckinService;
 import org.springframework.http.ResponseEntity;
@@ -11,28 +14,24 @@ import java.util.Map;
 @RestController
 @RequestMapping("/checkins")
 public class CheckinController {
+        private final CheckinService checkinService;
 
-    private final CheckinService checkinService;
+        public CheckinController(CheckinService checkinService) {
+            this.checkinService = checkinService;
+        }
 
-    public CheckinController(CheckinService checkinService) {
-        this.checkinService = checkinService;
-    }
+        @PostMapping
+        public ResponseEntity<CheckinResponse> realizarCheckin(@RequestBody CheckinRequest request) {
+            return ResponseEntity.status(201).body(checkinService.realizarCheckin(request));
+        }
 
-    // POST /checkins — realiza check-in de um hábito
-    @PostMapping
-    public ResponseEntity<CheckinModel> realizarCheckin(@RequestBody CheckinModel checkin) {
-        return ResponseEntity.status(201).body(checkinService.realizarCheckin(checkin));
-    }
+        @GetMapping("/habito/{habitoId}")
+        public ResponseEntity<List<CheckinResponse>> historico(@PathVariable Long habitoId) {
+            return ResponseEntity.ok(checkinService.historicoPorHabito(habitoId));
+        }
 
-    // GET /checkins/habito/{habitoId} — histórico de checkins de um hábito
-    @GetMapping("/habito/{habitoId}")
-    public ResponseEntity<List<CheckinModel>> historicoPorHabito(@PathVariable Long habitoId) {
-        return ResponseEntity.ok(checkinService.historicoPorHabito(habitoId));
-    }
-
-    // GET /checkins/progresso/{usuarioId} — dados para o gráfico circular
-    @GetMapping("/progresso/{usuarioId}")
-    public ResponseEntity<Map<String, Long>> progressoDoDia(@PathVariable Long usuarioId) {
-        return ResponseEntity.ok(checkinService.progressoDoDia(usuarioId));
-    }
+        @GetMapping("/progresso/{usuarioId}")
+        public ResponseEntity<ProgressoResponse> progresso(@PathVariable Long usuarioId) {
+            return ResponseEntity.ok(checkinService.progressoDoDia(usuarioId));
+        }
 }

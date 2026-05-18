@@ -1,5 +1,8 @@
 package com.yadot.api.service;
 
+import com.yadot.api.dto.CheckinRequest;
+import com.yadot.api.dto.CheckinResponse;
+import com.yadot.api.dto.ProgressoResponse;
 import com.yadot.api.enums.DiasSemana;
 import com.yadot.api.model.CheckinModel;
 import com.yadot.api.model.HabitModel;
@@ -29,41 +32,40 @@ public class CheckinService {
         this.userRepository = userRepository;
     }
 
-    public CheckinModel realizarCheckin(CheckinModel checkin) {
-        // Regra: só permite checkin na data de hoje
-        if (!checkin.getDataCheckin().equals(LocalDate.now())) {
+    public CheckinResponse realizarCheckin(CheckinRequest request) {
+        LocalDate data = LocalDate.parse(request.getDataCheckin());
+        if (!data.equals(LocalDate.now())) {
             throw new RuntimeException("Não é possível fazer check-in em datas passadas.");
         }
-        return checkinRepository.save(checkin);
-    }
 
-    public List<CheckinModel> historicoPorHabito(Long habitoId) {
-        HabitModel habito = habitRepository.findById(habitoId)
+        HabitModel habit = habitRepository.findById(request.getHabitId())
                 .orElseThrow(() -> new RuntimeException("Hábito não encontrado."));
-        return checkinRepository.findByHabit(habito);
-        // precisará adicionar findByHabit no CheckinRepository
+        CheckinModel checkin = new CheckinModel();
+        checkin.setHabit(habit);
+        checkin.setDataCheckin(data);
+        return toResponse(checkinRepository.save(checkin));
     }
 
-    public Map<String, Long> progressoDoDia(Long usuarioId) {
+    public List<CheckinResponse> historicoPorHabito(Long habitoId) {
+        HabitModel habit = habitRepository.findById(habitoId)
+                .orElseThrow(() -> new RuntimeException("Hábito não encontrado."));
+        return checkinRepository.findByHabit(habit)
+                .stream().map(this::toResponse).toList();
+    }
+
+    public ProgressoResponse progressoDoDia(Long usuarioId) {
         UserModel usuario = userRepository.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
-
         List<CheckinModel> checkinsDoDia = checkinRepository
                 .findByHabitUsuarioAndDataCheckin(usuario, LocalDate.now());
-
-        long concluidos = checkinsDoDia.size();
-
         DiasSemana diaAtual = converterDia(LocalDate.now().getDayOfWeek());
-        long totalDoDia = habitRepository
-                .findByUsuarioAndDiasDaSemanaContaining(usuario, diaAtual).size();
-
-        long pendentes = totalDoDia - concluidos;
-
-        Map<String, Long> progresso = new HashMap<>();
-        progresso.put("concluidos", concluidos);
-        progresso.put("pendentes", Math.max(pendentes, 0));
-        progresso.put("total", totalDoDia);
-        return progresso;
+        long total = habitRepository.findByUsuarioAndDiasDaSemanaContaining(usuario, diaAtual).size();
+        long concluidos = checkinsDoDia.size();
+        ProgressoResponse response = new ProgressoResponse();
+        response.setConcluidos(concluidos);
+        response.setPendentes(Math.max(total - concluidos, 0));
+        response.setTotal(total);
+        return response;
     }
 
     private DiasSemana converterDia(DayOfWeek dia) {
@@ -76,5 +78,12 @@ public class CheckinService {
             case SATURDAY  -> DiasSemana.SABADO;
             case SUNDAY    -> DiasSemana.DOMINGO;
         };
+    }
+    private CheckinResponse toResponse(CheckinModel model) {
+        CheckinResponse response = new CheckinResponse();
+        response.setCheckinId(model.getCheckinId());
+        response.setHabitId(model.getHabit().getHabitId());
+        response.setDataCheckin(model.getDataCheckin().toString());
+        return response;
     }
 }

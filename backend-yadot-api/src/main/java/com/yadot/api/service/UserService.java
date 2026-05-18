@@ -1,5 +1,8 @@
 package com.yadot.api.service;
 
+import com.yadot.api.dto.UsuarioCadastroRequest;
+import com.yadot.api.dto.UsuarioLoginRequest;
+import com.yadot.api.dto.UsuarioResponse;
 import com.yadot.api.model.UserModel;
 import com.yadot.api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,28 +26,36 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public void registerUser(UserModel novoUsuario) {
-        if (userRepository.findByEmail(novoUsuario.getEmail()).isPresent()) { //findByEmail retorna Optional — .isPresent() checa se encontrou algo
+    public UsuarioResponse registerUser(UsuarioCadastroRequest request) {
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("Email já cadastrado.");
         }
-        String senhaCriptografada = passwordEncoder.encode(novoUsuario.getSenhaHash());
-        //encode is criptography function do BCrypt => a gente cria a variavel local, chama a função para criptografar e passa a senha atual para ser criptografada com get
-        // encode() transforma "minhasenha123" em "$2a$10$..." (hash BCrypt) depois setamos a senhaCriptografada para o banco através do set
-        novoUsuario.setSenhaHash(senhaCriptografada);
-
-        userRepository.save(novoUsuario);
+        UserModel novo = new UserModel();
+        novo.setNome(request.getNome());
+        novo.setSobrenome(request.getSobrenome());
+        novo.setEmail(request.getEmail());
+        novo.setSenhaHash(passwordEncoder.encode(request.getSenhaHash()));
+        UserModel salvo = userRepository.save(novo);
+        return toResponse(salvo);
     }
 
-    public void loginUser(UserModel usuarioRequest){
-        UserModel usuarioBanco = userRepository.findByEmail(usuarioRequest.getEmail())
-                .orElseThrow(() -> new RuntimeException("Email não cadastrado. Registre-se"));
-        boolean senhaConfere = passwordEncoder.matches(
-                usuarioRequest.getSenhaHash(),
-                usuarioBanco.getSenhaHash());
-
-        if (!senhaConfere) {
+    public UsuarioResponse loginUser(UsuarioLoginRequest request) {
+        UserModel usuario = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("Email não cadastrado."));
+        if (!passwordEncoder.matches(request.getSenhaHash(), usuario.getSenhaHash())) {
             throw new RuntimeException("Senha incorreta.");
         }
+        return toResponse(usuario);
+    }
+
+    // método privado para não repetir a conversão
+    private UsuarioResponse toResponse(UserModel model) {
+        UsuarioResponse response = new UsuarioResponse();
+        response.setId(model.getId());
+        response.setNome(model.getNome());
+        response.setSobrenome(model.getSobrenome());
+        response.setEmail(model.getEmail());
+        return response;
     }
 
     public Optional<UserModel> findByEmail(String email) { // Busca por email — será usado no login depois

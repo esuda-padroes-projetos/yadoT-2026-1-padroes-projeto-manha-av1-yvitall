@@ -1,5 +1,8 @@
 package com.yadot.api.service;
 
+import com.yadot.api.dto.HabitoRequest;
+import com.yadot.api.dto.HabitoResponse;
+import com.yadot.api.enums.Categoria;
 import com.yadot.api.enums.DiasSemana;
 import com.yadot.api.model.HabitModel;
 import com.yadot.api.model.UserModel;
@@ -23,58 +26,59 @@ public class HabitService {
     }
 
     // Criar hábito
-    public HabitModel criarHabito(HabitModel novoHabito) {
-        return habitRepository.save(novoHabito);
+    public HabitoResponse criarHabito(HabitoRequest request) {
+        UserModel usuario = userRepository.findById(request.getUsuarioId())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+        HabitModel novo = new HabitModel();
+        novo.setUsuario(usuario);
+        novo.setHabitName(request.getHabitName());
+        novo.setCategoria(Categoria.valueOf(request.getCategoria()));
+        novo.setHabitIcon(request.getHabitIcon());
+        novo.setDiasDaSemana(request.getDiasDaSemana().stream()
+                .map(DiasSemana::valueOf)
+                .toList());
+        return toResponse(habitRepository.save(novo));
     }
 
     // Listar todos os hábitos de um usuário
-    public List<HabitModel> listarPorUsuario(Long usuarioId) {
-        // Primeiro buscamos o usuário — se não existir, lança erro
+    public List<HabitoResponse> listarPorUsuario(Long usuarioId) {
         UserModel usuario = userRepository.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
-        // orElseThrow é o Optional dizendo: "se tiver valor, retorna; se não, lança essa exceção"
-
-        return habitRepository.findByUsuario(usuario);
+        return habitRepository.findByUsuario(usuario)
+                .stream().map(this::toResponse).toList();
     }
 
     // Listar hábitos do dia atual — base do gráfico circular
-    public List<HabitModel> listarHabitosDoDia(Long usuarioId) {
+    public List<HabitoResponse> listarHabitosDoDia(Long usuarioId) {
         UserModel usuario = userRepository.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
-
-        // Pega o dia da semana atual do Java (em inglês: MONDAY, TUESDAY...)
-        DayOfWeek diaSemanaJava = LocalDate.now().getDayOfWeek();
-
-        // Converte para o seu enum em português
-        DiasSemana diaAtual = converterDia(diaSemanaJava);
-
-        return habitRepository.findByUsuarioAndDiasDaSemanaContaining(usuario, diaAtual);
+        DiasSemana diaAtual = converterDia(LocalDate.now().getDayOfWeek());
+        return habitRepository.findByUsuarioAndDiasDaSemanaContaining(usuario, diaAtual)
+                .stream().map(this::toResponse).toList();
     }
 
     // Buscar hábito por ID — usado pelo lápis de edição
-    public HabitModel buscarPorId(Long id) {
-        return habitRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Hábito não encontrado."));
+    public HabitoResponse buscarPorId(Long id) {
+        return toResponse(habitRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Hábito não encontrado.")));
     }
 
     // Editar hábito
-    public HabitModel editarHabito(Long id, HabitModel dadosAtualizados) {
-        HabitModel habitoExistente = buscarPorId(id);
-
-        // Atualiza só os campos que podem mudar
-        habitoExistente.setHabitName(dadosAtualizados.getHabitName());
-        habitoExistente.setCategoria(dadosAtualizados.getCategoria());
-        habitoExistente.setHabitIcon(dadosAtualizados.getHabitIcon());
-        habitoExistente.setDiasDaSemana(dadosAtualizados.getDiasDaSemana());
-
-        return habitRepository.save(habitoExistente);
-        // save() com ID existente faz UPDATE, não INSERT — o JPA sabe distinguir
+    public HabitoResponse editarHabito(Long id, HabitoRequest request) {
+        HabitModel existente = habitRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Hábito não encontrado."));
+        existente.setHabitName(request.getHabitName());
+        existente.setCategoria(Categoria.valueOf(request.getCategoria()));
+        existente.setHabitIcon(request.getHabitIcon());
+        existente.setDiasDaSemana(request.getDiasDaSemana().stream()
+                .map(DiasSemana::valueOf).toList());
+        return toResponse(habitRepository.save(existente));
     }
 
     // Deletar hábito
     public void deletarHabito(Long id) {
-        HabitModel habito = buscarPorId(id); // garante que existe antes de deletar
-        habitRepository.delete(habito);
+        habitRepository.delete(habitRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Hábito não encontrado.")));
     }
 
     // Conversão do DayOfWeek do Java para o seu enum DiasSemana
@@ -88,5 +92,15 @@ public class HabitService {
             case SATURDAY -> DiasSemana.SABADO;
             case SUNDAY -> DiasSemana.DOMINGO;
         };
+    }
+    private HabitoResponse toResponse(HabitModel model) {
+        HabitoResponse response = new HabitoResponse();
+        response.setHabitId(model.getHabitId());
+        response.setHabitName(model.getHabitName());
+        response.setCategoria(model.getCategoria().name());
+        response.setHabitIcon(model.getHabitIcon());
+        response.setDiasDaSemana(model.getDiasDaSemana().stream()
+                .map(DiasSemana::name).toList());
+        return response;
     }
 }

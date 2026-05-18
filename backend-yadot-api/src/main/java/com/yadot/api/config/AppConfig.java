@@ -26,7 +26,7 @@ public class AppConfig {
         http
                 .csrf(csrf -> csrf.disable())         // desabilita proteção CSRF (necessário para APIs REST)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() //add
                         .anyRequest().permitAll()          // libera tudo por enquanto
 
                 );
