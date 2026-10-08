@@ -8,9 +8,11 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CheckinRepository extends JpaRepository<CheckinModel, Long> {
     List<CheckinModel> findByHabit(HabitModel habit);
     List<CheckinModel> findByHabitUsuarioAndDataCheckin(UserModel usuario, LocalDate data);
+    Optional<CheckinModel> findByHabitAndDataCheckin(HabitModel habit, LocalDate data);
 }

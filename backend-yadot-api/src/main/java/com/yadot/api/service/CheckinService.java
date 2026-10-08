@@ -40,6 +40,11 @@ public class CheckinService {
 
         HabitModel habit = habitRepository.findById(request.getHabitId())
                 .orElseThrow(() -> new RuntimeException("Hábito não encontrado."));
+
+        if (checkinRepository.findByHabitAndDataCheckin(habit, data).isPresent()) {
+            throw new RuntimeException("Check-in já realizado para este hábito hoje.");
+        }
+
         CheckinModel checkin = new CheckinModel();
         checkin.setHabit(habit);
         checkin.setDataCheckin(data);

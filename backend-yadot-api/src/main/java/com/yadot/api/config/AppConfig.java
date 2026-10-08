@@ -24,11 +24,11 @@ public class AppConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())         // desabilita proteção CSRF (necessário para APIs REST)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() //add
                         .anyRequest().permitAll()          // libera tudo por enquanto
-
                 );
         return http.build();
     }
