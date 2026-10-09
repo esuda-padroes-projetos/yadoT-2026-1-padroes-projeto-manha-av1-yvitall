@@ -1,16 +1,16 @@
 package com.yadot.api.service;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.yadot.api.dto.UsuarioCadastroRequest;
 import com.yadot.api.dto.UsuarioLoginRequest;
 import com.yadot.api.dto.UsuarioResponse;
 import com.yadot.api.model.UserModel;
 import com.yadot.api.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService {

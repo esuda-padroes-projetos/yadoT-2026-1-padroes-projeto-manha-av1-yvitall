@@ -225,19 +225,42 @@ class HabitosViewModel(
         }
     }
 
-    fun cadastrar(nome: String, sobrenome: String, email: String, senha: String, onSucesso: () -> Unit, onErro: (String) -> Unit) {
-        viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(carregando = true, erro = null)
-            try {
-                val usuario = RetrofitClient.api.cadastrarUsuario(UsuarioCadastroRequest(nome, sobrenome, email, senha))
-                _uiState.value = _uiState.value.copy(carregando = false, usuarioLogado = usuario)
-                onSucesso()
-            } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(carregando = false, erro = "Erro ao cadastrar: ${e.message}")
-                onErro("")
-            }
+    fun cadastrar(
+    nome: String,
+    sobrenome: String,
+    email: String,
+    senha: String,
+    onSucesso: () -> Unit,
+    onErro: (String) -> Unit
+) {
+    viewModelScope.launch {
+        _uiState.value = _uiState.value.copy(carregando = true, erro = null)
+        try {
+            val usuario = RetrofitClient.api.cadastrarUsuario(
+                UsuarioCadastroRequest(
+                    nome = nome,
+                    sobrenome = sobrenome,
+                    email = email,
+                    senhaHash = senha // se o backend fizer hash, ok; senão, ver observação abaixo
+                )
+            )
+            _uiState.value = _uiState.value.copy(carregando = false, usuarioLogado = usuario)
+            carregarTodosHabitosECheckins()
+            onSucesso()
+        } catch (e: retrofit2.HttpException) {
+            val msg = try {
+                val corpo = e.response()?.errorBody()?.string()
+                if (!corpo.isNullOrBlank()) corpo else "Erro ${e.code()}"
+            } catch (_: Exception) { "Erro ${e.code()}" }
+            _uiState.value = _uiState.value.copy(carregando = false, erro = msg)
+            onErro(msg)
+        } catch (e: Exception) {
+            val msg = "Erro ao cadastrar: ${e.message}"
+            _uiState.value = _uiState.value.copy(carregando = false, erro = msg)
+            onErro(msg)
         }
     }
+}
 
     fun restaurarSessao(usuario: UsuarioResponse) {
         _uiState.value = _uiState.value.copy(usuarioLogado = usuario)
