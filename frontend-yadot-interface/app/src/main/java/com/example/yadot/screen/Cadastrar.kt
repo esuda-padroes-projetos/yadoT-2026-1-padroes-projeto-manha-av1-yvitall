@@ -1,3 +1,36 @@
+package com.example.yadot.screen
+
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import com.example.yadot.R
+import com.example.yadot.Rotas
+import com.example.yadot.ui.theme.Branco
+import com.example.yadot.ui.theme.Preto
+import com.example.yadot.viewmodel.HabitosViewModel
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.ui.text.input.VisualTransformation
+import com.example.yadot.ui.theme.VermelhoErro
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Cadastrar(
@@ -39,7 +72,6 @@ fun Cadastrar(
         ) {
             
             // --- LOGO E TÍTULO ---
-            // Substitua pelo seu código de imagem correto
             Box(
                 modifier = Modifier
                     .size(60.dp)
@@ -154,7 +186,6 @@ fun Cadastrar(
                 }
             }
             
-            // Adicionado link de login conforme a 2ª imagem
             Spacer(modifier = Modifier.height(16.dp))
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                 Text(text = "Tem conta? Realizar Login", color = Preto, fontSize = 14.sp)
