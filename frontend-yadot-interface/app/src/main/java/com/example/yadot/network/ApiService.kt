@@ -101,11 +101,18 @@ interface YadotApi {
 // ─────────────────────────────────────────────────────────────
 
 object RetrofitClient {
-    private const val BASE_URL = "https://backend-api-yadot.onrender.com"
+    private const val BASE_URL = "https://backend-api-yadot.onrender.com/"
+
+    private val okHttpClient = OkHttpClient.Builder()
+        .connectTimeout(60, TimeUnit.SECONDS)
+        .readTimeout(60, TimeUnit.SECONDS)
+        .writeTimeout(60, TimeUnit.SECONDS)
+        .build()
 
     val api: YadotApi by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
+            .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(YadotApi::class.java)
