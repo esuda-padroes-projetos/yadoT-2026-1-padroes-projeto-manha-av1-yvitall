@@ -1,0 +1,16 @@
+# Pastas de build/compilação locais
+target/
+build/
+
+# Arquivos de IDE (IntelliJ, Eclipse, VS Code)
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+
+# Controle de versão e logs
+.git/
+.gitignore
+*.log
