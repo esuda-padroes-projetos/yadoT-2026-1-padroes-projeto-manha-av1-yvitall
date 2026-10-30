@@ -1,8 +1,10 @@
 package com.example.yadot.network
 
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
+import java.util.concurrent.TimeUnit
 
 data class UsuarioCadastroRequest(
     val nome: String,
