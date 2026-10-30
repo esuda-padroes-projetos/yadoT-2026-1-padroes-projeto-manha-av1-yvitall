@@ -101,7 +101,7 @@ interface YadotApi {
 // ─────────────────────────────────────────────────────────────
 
 object RetrofitClient {
-    private const val BASE_URL = "https://yadot-api.up.railway.app/"
+    private const val BASE_URL = "https://backend-api-yadot.onrender.com"
 
     val api: YadotApi by lazy {
         Retrofit.Builder()
