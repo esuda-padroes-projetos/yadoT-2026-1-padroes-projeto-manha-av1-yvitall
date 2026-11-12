@@ -287,31 +287,21 @@ class HabitosViewModel(
         }
     }
 
-    fun removerHabito(habitoId: Long) {
-        if (!podeEditar()) return
-        viewModelScope.launch {
-            try {
-                RetrofitClient.api.deletarHabito(habitoId)
-                carregarTodosHabitosECheckins()
-            } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(erro = "Erro ao remover: ${e.message}")
-            }
-        }
-    }
-
     fun removerHabitoDoDia(habitoId: Long) {
         if (!podeEditar()) return
         viewModelScope.launch {
             try {
+                // Chama a nova rota do backend
                 RetrofitClient.api.deletarHabitoHoje(habitoId)
-                carregarTodosHabitosECheckins() // Recarrega para atualizar a tela
+                // Recarrega a tela para o hábito sumir apenas deste dia
+                carregarTodosHabitosECheckins() 
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(erro = "Erro ao remover do dia: ${e.message}")
             }
         }
     }
 
-    // Função de Logout
+    // Adicione a função de logout no final do ViewModel
     fun fazerLogout(context: android.content.Context) {
         SessionManager.limparSessao(context)
         // Limpa o estado para não vazar dados do usuário antigo na memória
