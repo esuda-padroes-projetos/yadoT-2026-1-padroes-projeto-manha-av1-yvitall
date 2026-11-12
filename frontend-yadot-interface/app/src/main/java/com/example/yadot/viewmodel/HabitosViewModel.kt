@@ -299,6 +299,28 @@ class HabitosViewModel(
         }
     }
 
+    fun removerHabitoDoDia(habitoId: Long) {
+        if (!podeEditar()) return
+        viewModelScope.launch {
+            try {
+                RetrofitClient.api.deletarHabitoHoje(habitoId)
+                carregarTodosHabitosECheckins() // Recarrega para atualizar a tela
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(erro = "Erro ao remover do dia: ${e.message}")
+            }
+        }
+    }
+
+    // Função de Logout
+    fun fazerLogout(context: android.content.Context) {
+        SessionManager.limparSessao(context)
+        // Limpa o estado para não vazar dados do usuário antigo na memória
+        _uiState.value = HabitosUiState()
+        _todosHabitos.value = emptyList()
+        _checkinsPorHabito.value = emptyMap()
+        _habitosDoDiaSelecionado.value = emptyList()
+    }
+
     fun realizarCheckin(habitoId: Long) {
         if (!podeCheckin()) return
         viewModelScope.launch {
