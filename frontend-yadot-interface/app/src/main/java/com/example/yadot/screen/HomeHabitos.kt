@@ -1,5 +1,8 @@
 package com.example.yadot.screen
 
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.ui.platform.LocalContext
+import com.example.yadot.Rotas
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animateFloatAsState
@@ -60,7 +63,7 @@ fun HomeHabitos(modifier: Modifier = Modifier, navController: NavHostController,
     ) {
         if (viewModel.podeEditar()) {
             // ========== Layout do dia atual (editável) ==========
-            Row(
+                        Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 12.dp, vertical = 20.dp),
@@ -71,18 +74,45 @@ fun HomeHabitos(modifier: Modifier = Modifier, navController: NavHostController,
                     text = "Week 1",
                     style = TextStyle(fontSize = 50.sp, color = Preto, fontWeight = FontWeight.Bold)
                 )
-                if (habitosDoDia.isNotEmpty()) {
+                
+                // Agrupando os botões de Editar e Logout à direita
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    if (habitosDoDia.isNotEmpty()) {
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(Preto)
+                                .clickable { viewModel.alternarModoEdicao() }
+                                .padding(10.dp)
+                        ) {
+                            Icon(
+                                imageVector = if (viewModel.modoEdicao) Icons.Filled.Check else Icons.Filled.Edit,
+                                contentDescription = "Editar",
+                                tint = Branco,
+                                modifier = Modifier.size(22.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(12.dp))
+                    }
+                    
+                    // NOVO BOTÃO DE LOGOUT
+                    val context = LocalContext.current
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(8.dp))
-                            .background(Preto)
-                            .clickable { viewModel.alternarModoEdicao() }
+                            .background(CinzaInativo)
+                            .clickable {
+                                viewModel.fazerLogout(context)
+                                navController.navigate(Rotas.HOME) {
+                                    popUpTo(0) { inclusive = true } // Limpa toda a pilha de navegação
+                                }
+                            }
                             .padding(10.dp)
                     ) {
                         Icon(
-                            imageVector = if (viewModel.modoEdicao) Icons.Filled.Check else Icons.Filled.Edit,
-                            contentDescription = "Editar",
-                            tint = Branco,
+                            imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                            contentDescription = "Sair",
+                            tint = Preto,
                             modifier = Modifier.size(22.dp)
                         )
                     }
@@ -135,14 +165,15 @@ fun HomeHabitos(modifier: Modifier = Modifier, navController: NavHostController,
                                 .padding(horizontal = 16.dp, vertical = 14.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            if (viewModel.modoEdicao) {
+                                                        if (viewModel.modoEdicao) {
                                 Icon(
                                     imageVector = Icons.Filled.RemoveCircle,
                                     contentDescription = "Remover",
                                     tint = VermelhoErro,
                                     modifier = Modifier
                                         .size(26.dp)
-                                        .clickable { viewModel.removerHabito(habito.id) }
+                                        // MUDANÇA AQUI: chamando a função nova
+                                        .clickable { viewModel.removerHabitoDoDia(habito.id) } 
                                 )
                                 Spacer(modifier = Modifier.width(10.dp))
                             }
