@@ -49,4 +49,11 @@ public class HabitController {
     public void deletar(@PathVariable Long id) {
         habitService.deletarHabito(id);
     }
+
+    // Em HabitController.java
+    @DeleteMapping("/{id}/hoje")
+    public ResponseEntity<Void> deletarHabitoDoDia(@PathVariable Long id) {
+        habitService.deletarHabitoDoDia(id);
+        return ResponseEntity.noContent().build();
+    }
 }
