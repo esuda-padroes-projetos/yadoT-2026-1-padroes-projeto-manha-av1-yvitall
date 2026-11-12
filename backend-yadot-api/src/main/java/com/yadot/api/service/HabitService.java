@@ -1,5 +1,11 @@
 package com.yadot.api.service;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
 import com.yadot.api.dto.HabitoRequest;
 import com.yadot.api.dto.HabitoResponse;
 import com.yadot.api.enums.Categoria;
@@ -8,11 +14,6 @@ import com.yadot.api.model.HabitModel;
 import com.yadot.api.model.UserModel;
 import com.yadot.api.repository.HabitRepository;
 import com.yadot.api.repository.UserRepository;
-import org.springframework.stereotype.Service;
-
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.util.List;
 
 @Service
 public class HabitService {
@@ -81,6 +82,23 @@ public class HabitService {
                 .orElseThrow(() -> new RuntimeException("Hábito não encontrado.")));
     }
 
+    // Deletar hábito
+    public void deletarHabitoDoDia(Long id) {
+        HabitModel habito = habitRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Hábito não encontrado."));
+        DiasSemana diaAtual = converterDia(LocalDate.now().getDayOfWeek());
+
+        List<DiasSemana> dias = habito.getDiasDaSemana();
+        dias.remove(diaAtual);
+
+        if (dias.isEmpty()) {
+            habitRepository.delete(habito);
+        } else {
+            habito.setDiasDaSemana(dias);
+            habitRepository.save(habito);
+        }
+    }
+
     // Conversão do DayOfWeek do Java para o seu enum DiasSemana
     private DiasSemana converterDia(DayOfWeek dia) {
         return switch (dia) {
@@ -93,6 +111,7 @@ public class HabitService {
             case SUNDAY -> DiasSemana.DOMINGO;
         };
     }
+
     private HabitoResponse toResponse(HabitModel model) {
         HabitoResponse response = new HabitoResponse();
         response.setHabitId(model.getHabitId());
