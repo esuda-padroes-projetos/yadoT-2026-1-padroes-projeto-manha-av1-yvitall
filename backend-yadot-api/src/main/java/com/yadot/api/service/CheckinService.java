@@ -1,5 +1,11 @@
 package com.yadot.api.service;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
 import com.yadot.api.dto.CheckinRequest;
 import com.yadot.api.dto.CheckinResponse;
 import com.yadot.api.dto.ProgressoResponse;
@@ -10,13 +16,6 @@ import com.yadot.api.model.UserModel;
 import com.yadot.api.repository.CheckinRepository;
 import com.yadot.api.repository.HabitRepository;
 import com.yadot.api.repository.UserRepository;
-import org.springframework.stereotype.Service;
-
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Service
 public class CheckinService {
@@ -26,7 +25,8 @@ public class CheckinService {
 
     private final UserRepository userRepository;
 
-    public CheckinService(CheckinRepository checkinRepository, HabitRepository habitRepository, UserRepository userRepository) {
+    public CheckinService(CheckinRepository checkinRepository, HabitRepository habitRepository,
+            UserRepository userRepository) {
         this.checkinRepository = checkinRepository;
         this.habitRepository = habitRepository;
         this.userRepository = userRepository;
@@ -75,15 +75,16 @@ public class CheckinService {
 
     private DiasSemana converterDia(DayOfWeek dia) {
         return switch (dia) {
-            case MONDAY    -> DiasSemana.SEGUNDA;
-            case TUESDAY   -> DiasSemana.TERCA;
+            case MONDAY -> DiasSemana.SEGUNDA;
+            case TUESDAY -> DiasSemana.TERCA;
             case WEDNESDAY -> DiasSemana.QUARTA;
-            case THURSDAY  -> DiasSemana.QUINTA;
-            case FRIDAY    -> DiasSemana.SEXTA;
-            case SATURDAY  -> DiasSemana.SABADO;
-            case SUNDAY    -> DiasSemana.DOMINGO;
+            case THURSDAY -> DiasSemana.QUINTA;
+            case FRIDAY -> DiasSemana.SEXTA;
+            case SATURDAY -> DiasSemana.SABADO;
+            case SUNDAY -> DiasSemana.DOMINGO;
         };
     }
+
     private CheckinResponse toResponse(CheckinModel model) {
         CheckinResponse response = new CheckinResponse();
         response.setCheckinId(model.getCheckinId());
