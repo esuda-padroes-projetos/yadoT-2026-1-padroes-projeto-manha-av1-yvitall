@@ -88,6 +88,9 @@ interface YadotApi {
     @DELETE("habitos/{id}")
     suspend fun deletarHabito(@Path("id") id: Long)
 
+     @DELETE("habitos/{id}/hoje")
+    suspend fun deletarHabitoHoje(@Path("id") id: Long)
+
     @POST("checkins")
     suspend fun realizarCheckin(@Body body: CheckinRequest): CheckinResponse
 
