@@ -3,6 +3,7 @@ package com.yadot.api.service;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,8 @@ import com.yadot.api.model.HabitModel;
 import com.yadot.api.model.UserModel;
 import com.yadot.api.repository.HabitRepository;
 import com.yadot.api.repository.UserRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class HabitService {
@@ -82,19 +85,23 @@ public class HabitService {
                 .orElseThrow(() -> new RuntimeException("Hábito não encontrado.")));
     }
 
-    // Deletar hábito
+    // Deletar hábito do dia
+    @Transactional // 🚨 ISSO É OBRIGATÓRIO PARA O BANCO SALVAR A ALTERAÇÃO
     public void deletarHabitoDoDia(Long id) {
         HabitModel habito = habitRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Hábito não encontrado."));
+
         DiasSemana diaAtual = converterDia(LocalDate.now().getDayOfWeek());
 
-        List<DiasSemana> dias = habito.getDiasDaSemana();
-        dias.remove(diaAtual);
+        // O stream abaixo remove TODAS as instâncias do dia, ignorando duplicatas
+        List<DiasSemana> diasAtualizados = habito.getDiasDaSemana().stream()
+                .filter(dia -> dia != diaAtual)
+                .collect(Collectors.toList());
 
-        if (dias.isEmpty()) {
+        if (diasAtualizados.isEmpty()) {
             habitRepository.delete(habito);
         } else {
-            habito.setDiasDaSemana(dias);
+            habito.setDiasDaSemana(diasAtualizados);
             habitRepository.save(habito);
         }
     }
