@@ -270,7 +270,7 @@ class HabitosViewModel(
     // Hábitos
     fun adicionarHabito(nomeDigitado: String, categoria: String, icone: String, diasSelecionados: List<String>) {
         val userId = _uiState.value.usuarioLogado?.id ?: return
-        val diasConvertidos = diasSelecionados.mapNotNull { diasParaEnum[it] }
+        val diasConvertidos = diasSelecionados.distinct().mapNotNull { diasParaEnum[it] } 
         if (diasConvertidos.isEmpty()) {
             _uiState.value = _uiState.value.copy(erro = "Selecione ao menos um dia.")
             return
@@ -324,7 +324,7 @@ class HabitosViewModel(
                 // Recarrega histórico do hábito e atualiza
                 val novoHistorico = RetrofitClient.api.historicoCheckins(habitoId)
                 _checkinsPorHabito.update { it + (habitoId to novoHistorico) }
-                
+
                  _uiState.value = _uiState.value.copy(erro = null) // Limpa erro se der certo
                 atualizarHabitosEProgresso()
             } catch (e: Exception) {

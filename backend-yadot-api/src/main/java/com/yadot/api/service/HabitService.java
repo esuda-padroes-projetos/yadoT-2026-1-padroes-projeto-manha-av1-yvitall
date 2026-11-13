@@ -38,9 +38,12 @@ public class HabitService {
         novo.setHabitName(request.getHabitName());
         novo.setCategoria(Categoria.valueOf(request.getCategoria()));
         novo.setHabitIcon(request.getHabitIcon());
+
+        // A MUDANÇA ESTÁ AQUI: collect(Collectors.toSet()) em vez de toList()
         novo.setDiasDaSemana(request.getDiasDaSemana().stream()
                 .map(DiasSemana::valueOf)
-                .toList());
+                .collect(Collectors.toSet()));
+
         return toResponse(habitRepository.save(novo));
     }
 
@@ -74,8 +77,10 @@ public class HabitService {
         existente.setHabitName(request.getHabitName());
         existente.setCategoria(Categoria.valueOf(request.getCategoria()));
         existente.setHabitIcon(request.getHabitIcon());
-        existente.setDiasDaSemana(request.getDiasDaSemana().stream()
-                .map(DiasSemana::valueOf).toList());
+        existente.setDiasDaSemana(request.getDiasDaSemana()
+                .stream()
+                .map(DiasSemana::valueOf)
+                .collect(Collectors.toSet()));
         return toResponse(habitRepository.save(existente));
     }
 
@@ -86,22 +91,19 @@ public class HabitService {
     }
 
     // Deletar hábito do dia
-    @Transactional // 🚨 ISSO É OBRIGATÓRIO PARA O BANCO SALVAR A ALTERAÇÃO
+    @Transactional
     public void deletarHabitoDoDia(Long id) {
         HabitModel habito = habitRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Hábito não encontrado."));
 
         DiasSemana diaAtual = converterDia(LocalDate.now().getDayOfWeek());
 
-        // O stream abaixo remove TODAS as instâncias do dia, ignorando duplicatas
-        List<DiasSemana> diasAtualizados = habito.getDiasDaSemana().stream()
-                .filter(dia -> dia != diaAtual)
-                .collect(Collectors.toList());
+        // Como é um Set, isso remove o dia de forma limpa
+        habito.getDiasDaSemana().remove(diaAtual);
 
-        if (diasAtualizados.isEmpty()) {
+        if (habito.getDiasDaSemana().isEmpty()) {
             habitRepository.delete(habito);
         } else {
-            habito.setDiasDaSemana(diasAtualizados);
             habitRepository.save(habito);
         }
     }

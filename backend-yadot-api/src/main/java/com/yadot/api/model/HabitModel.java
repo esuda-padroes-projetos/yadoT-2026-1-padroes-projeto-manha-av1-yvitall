@@ -1,6 +1,8 @@
 package com.yadot.api.model;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.yadot.api.enums.Categoria;
 import com.yadot.api.enums.DiasSemana;
@@ -22,6 +24,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -58,7 +61,7 @@ public class HabitModel {
     @CollectionTable(name = "habitos_dias", joinColumns = @JoinColumn(name = "habit_id"))
     @Enumerated(EnumType.STRING) // ao inves de armazenar os numeros(indices do enum) salvaremos a string
                                  // contendo dia da semana
-    private List<DiasSemana> diasDaSemana;
+    private Set<DiasSemana> diasDaSemana = new HashSet<>();
 
     // Um Hábito tem um histórico de vários check-ins
     @OneToMany(mappedBy = "habit", cascade = CascadeType.ALL)
