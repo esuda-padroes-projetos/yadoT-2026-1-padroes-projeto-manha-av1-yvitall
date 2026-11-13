@@ -291,11 +291,17 @@ class HabitosViewModel(
         if (!podeEditar()) return
         viewModelScope.launch {
             try {
-                // Chamando a rota NOVA
-                RetrofitClient.api.deletarHabitoHoje(habitoId)
-                carregarTodosHabitosECheckins() 
+                // Agora a chamada retorna um Response
+                val response = RetrofitClient.api.deletarHabitoHoje(habitoId)
+                
+                if (response.isSuccessful) {
+                    _uiState.value = _uiState.value.copy(erro = null) // Limpa erros antigos
+                    carregarTodosHabitosECheckins() 
+                } else {
+                    _uiState.value = _uiState.value.copy(erro = "Erro no servidor: ${response.code()}")
+                }
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(erro = "Erro ao remover: ${e.message}")
+                _uiState.value = _uiState.value.copy(erro = "Falha na conexão: ${e.message}")
             }
         }
     }
@@ -318,6 +324,8 @@ class HabitosViewModel(
                 // Recarrega histórico do hábito e atualiza
                 val novoHistorico = RetrofitClient.api.historicoCheckins(habitoId)
                 _checkinsPorHabito.update { it + (habitoId to novoHistorico) }
+                
+                 _uiState.value = _uiState.value.copy(erro = null) // Limpa erro se der certo
                 atualizarHabitosEProgresso()
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(erro = "Erro ao checkin: ${e.message}")

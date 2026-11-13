@@ -1,5 +1,6 @@
 package com.example.yadot.network
 
+import retrofit2.Response
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -88,8 +89,8 @@ interface YadotApi {
     @DELETE("habitos/{id}")
     suspend fun deletarHabito(@Path("id") id: Long)
 
-     @DELETE("habitos/{id}/hoje")
-    suspend fun deletarHabitoHoje(@Path("id") id: Long)
+    @DELETE("habitos/{id}/hoje")
+    suspend fun deletarHabitoHoje(@Path("id") id: Long): Response<Unit> // <-- Adicione o Response<Unit>
 
     @POST("checkins")
     suspend fun realizarCheckin(@Body body: CheckinRequest): CheckinResponse
