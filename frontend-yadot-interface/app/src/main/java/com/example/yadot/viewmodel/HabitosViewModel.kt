@@ -291,12 +291,11 @@ class HabitosViewModel(
         if (!podeEditar()) return
         viewModelScope.launch {
             try {
-                // Chama a nova rota do backend
+                // Chamando a rota NOVA
                 RetrofitClient.api.deletarHabitoHoje(habitoId)
-                // Recarrega a tela para o hábito sumir apenas deste dia
                 carregarTodosHabitosECheckins() 
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(erro = "Erro ao remover do dia: ${e.message}")
+                _uiState.value = _uiState.value.copy(erro = "Erro ao remover: ${e.message}")
             }
         }
     }
