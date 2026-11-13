@@ -98,11 +98,7 @@ interface YadotApi {
     suspend fun historicoCheckins(@Path("habitoId") habitoId: Long): List<CheckinResponse>
 
     @GET("checkins/progresso/{usuarioId}")
-    suspend fun progressoDoDia(@Path("usuarioId") usuarioId: Long): ProgressoResponse
-
-    // NOVA ROTA: Deleta apenas a ocorrência do dia atual
-    @DELETE("habitos/{id}/hoje") 
-    suspend fun deletarHabitoHoje(@Path("id") id: Long) 
+    suspend fun progressoDoDia(@Path("usuarioId") usuarioId: Long): ProgressoResponse 
 }
 
 // ─────────────────────────────────────────────────────────────
