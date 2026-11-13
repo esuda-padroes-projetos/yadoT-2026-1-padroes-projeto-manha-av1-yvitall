@@ -61,6 +61,17 @@ fun HomeHabitos(modifier: Modifier = Modifier, navController: NavHostController,
             .padding(horizontal = 15.dp, vertical = 32.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        if (uiState.erro != null) {
+            Text(
+                text = "ERRO: ${uiState.erro}",
+                color = androidx.compose.ui.graphics.Color.Red,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(androidx.compose.ui.graphics.Color(0xFFFFCDD2))
+                    .padding(8.dp),
+                fontSize = 12.sp
+            )
+        }
         if (viewModel.podeEditar()) {
             // ========== Layout do dia atual (editável) ==========
                         Row(
