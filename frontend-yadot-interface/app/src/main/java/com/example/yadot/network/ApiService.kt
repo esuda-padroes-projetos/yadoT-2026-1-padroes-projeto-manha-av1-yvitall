@@ -88,6 +88,9 @@ interface YadotApi {
     @DELETE("habitos/{id}")
     suspend fun deletarHabito(@Path("id") id: Long)
 
+     @DELETE("habitos/{id}/hoje")
+    suspend fun deletarHabitoHoje(@Path("id") id: Long)
+
     @POST("checkins")
     suspend fun realizarCheckin(@Body body: CheckinRequest): CheckinResponse
 
@@ -95,7 +98,7 @@ interface YadotApi {
     suspend fun historicoCheckins(@Path("habitoId") habitoId: Long): List<CheckinResponse>
 
     @GET("checkins/progresso/{usuarioId}")
-    suspend fun progressoDoDia(@Path("usuarioId") usuarioId: Long): ProgressoResponse
+    suspend fun progressoDoDia(@Path("usuarioId") usuarioId: Long): ProgressoResponse 
 }
 
 // ─────────────────────────────────────────────────────────────
